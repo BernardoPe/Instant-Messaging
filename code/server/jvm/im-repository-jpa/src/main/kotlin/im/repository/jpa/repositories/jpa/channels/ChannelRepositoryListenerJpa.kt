@@ -23,9 +23,10 @@ class ChannelRepositoryListenerJpa(
 
     @PreRemove
     fun onChannelDelete(channel: ChannelDTO) {
-        val members = channel.members // force load before deletion
-            .mapKeys { it.key.toDomain() }
-            .mapValues { it.value.toDomain() }
+        val members =
+            channel.members // force load before deletion
+                .mapKeys { it.key.toDomain() }
+                .mapValues { it.value.toDomain() }
         val channel = channel.toDomain().copy(membersLazy = lazy { members })
         applicationEventPublisher.publishEvent(RepositoryEventJpa(RepositoryEvent.EntityRemoved(channel)))
     }
